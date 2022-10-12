@@ -27,11 +27,9 @@ def redis_stream():
                movement = []
                for vehicle in objects:
                   x, y = vehicle.pos.x, vehicle.pos.y
-                  movement.append({'posx': x, 'posy': y})
+                  movement.append({'posx': x/4, 'posy': y/4})
                socketio.emit('redis data', movement)   
 run = True
-
-
 def stream():
     while run:
       sleep(3) 
