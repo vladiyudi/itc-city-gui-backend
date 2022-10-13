@@ -27,7 +27,7 @@ def redis_stream():
                movement = []
                for vehicle in objects:
                   x, y = vehicle.pos.x, vehicle.pos.y
-                  movement.append({'posx': x/3.39, 'posy': y/3.39})
+                  movement.append({'posx': x/50, 'posy': y/40})
                socketio.emit('redis data', movement)   
 run = True
 def stream():
