@@ -17,7 +17,7 @@ app = Flask(__name__)
 CORS(app)
 app.config['CORS_HEADERS'] = 'application/json'
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, cors_allowed_origins="http://localhost:3001")
+socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
 
 # lock = Lock()
 r = redis.Redis('10.10.10.177', 6379)
