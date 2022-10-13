@@ -2,21 +2,28 @@ from concurrent.futures import thread
 from distutils.log import debug
 from socket import socket
 from time import sleep
-from flask import Flask, render_template
+from urllib import request
+from flask import Flask, render_template, Response, request
 from flask_socketio import SocketIO
 import random
-from threading import Timer, Thread
+from threading import Timer, Thread, Lock
 import redis
 import trafficmonitoring_pb2 as tm
 import asyncio
+import json
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app)
+app.config['CORS_HEADERS'] = 'application/json'
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, cors_allowed_origins="http://localhost:3001")
+socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
 
+# lock = Lock()
 r = redis.Redis('10.10.10.177', 6379)
 
 def redis_stream():
+   global lock
    channel = r.pubsub()
    channel.subscribe('CellGridMapClose')
    for msg in channel.listen():   
@@ -32,7 +39,7 @@ def redis_stream():
 run = True
 def stream():
     while run:
-      sleep(3) 
+      sleep(5)
       socketio.emit('frontend response', {"data":{
    "cars": random.randint(0, 100),
    "busses": random.randint(0, 100),
@@ -64,22 +71,21 @@ def stream2():
 # }
   
 
+# @app.route('/serverData')
+# def serverData():
+#    return Response(redis_stream(), mimetype='tapplication/json')
+
+
+
 @app.route('/')
 def index():
    socketio.emit('my event', {'data': 'Connected data'})
-   return "Hello man"
-
-# @socketio.on('connect')
-# def test_connect():
-#    socketio.emit('my response', {'data': 'Connected man'})
-
+   return "Connected"
    
 @socketio.on('new connection')
 def handle_my_custom_event(json):
-   print('received json: ' + str(json))
-   # socketio.emit('redis data', {"data": 'objects'})
+   print('received: ' + str(json))
    stream()
-   # socketio.emit('frontend response', {'data': vehicle_data})
 
 @socketio.on('Build chart')
 def emitchart(json):
@@ -89,4 +95,5 @@ def emitchart(json):
 if __name__ == '__main__':
    thread = Thread(target=redis_stream)
    thread.start()
+   # redis_stream()
    socketio.run(app, debug=True)
