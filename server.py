@@ -3,31 +3,31 @@ from distutils.log import debug
 from socket import socket
 from time import sleep
 from urllib import request
+from wsgiref import headers
 from flask import Flask, render_template, Response, request
 from flask_socketio import SocketIO
 import random
 from threading import Timer, Thread, Lock
 import redis
 import trafficmonitoring_pb2 as tm
-import asyncio
-import json
 from flask_cors import CORS, cross_origin
+from markupsafe import escape
+from db import chart_data
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'application/json'
+app.config['CORS_ORIGINS'] = ['*']
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, cors_allowed_origins="http://localhost:3000")
+socketio = SocketIO(app, cors_allowed_origins="*")
 
-# lock = Lock()
 r = redis.Redis('10.10.10.177', 6379)
 
 def redis_stream():
-   global lock
    channel = r.pubsub()
    channel.subscribe('CellGridMapClose')
    for msg in channel.listen():   
-      if msg['type'] == 'message':
+      if msg['type'] == 'message': 
                obj = tm.CellGridMapping()
                obj.ParseFromString(msg['data'])
                objects = obj.objects
@@ -35,11 +35,12 @@ def redis_stream():
                for vehicle in objects:
                   x, y = vehicle.pos.x, vehicle.pos.y
                   movement.append({'posx': x/50, 'posy': y/40})
+                
                socketio.emit('redis data', movement)   
 run = True
 def stream():
-    while run:
-      sleep(5)
+   #  while run:
+   #    sleep(5)
       socketio.emit('frontend response', {"data":{
    "cars": random.randint(0, 100),
    "busses": random.randint(0, 100),
@@ -60,22 +61,11 @@ def stream2():
 
 }})
 
-
-
-
-# vehicle_data = {
-#    "cars": random.randint(0, 100),
-#    "busses": random.randint(0, 100),
-#    "trucks": random.randint(0, 100),
-#    "pedestrans": random.randint(0, 100),
-# }
-  
-
-# @app.route('/serverData')
-# def serverData():
-#    return Response(redis_stream(), mimetype='tapplication/json')
-
-
+@app.route('/traffic-volume', methods=['GET'])
+@cross_origin(origins="*")
+def traffic_volume():
+   print('traffic-volume')
+   return {"data":chart_data}
 
 @app.route('/')
 def index():
