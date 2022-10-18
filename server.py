@@ -1,9 +1,6 @@
 from concurrent.futures import thread
 from distutils.log import debug
-from socket import socket
 from time import sleep
-from urllib import request
-from wsgiref import headers
 from flask import Flask, render_template, Response, request
 from flask_socketio import SocketIO
 import random
@@ -13,11 +10,18 @@ import trafficmonitoring_pb2 as tm
 from flask_cors import CORS, cross_origin
 from markupsafe import escape
 from db import chart_data
+import json
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
-app.config['CORS_HEADERS'] = 'application/json'
-app.config['CORS_ORIGINS'] = ['*']
+app = Flask(__name__, 
+            # static_url_path='/static', 
+            # static_folder='web/static',
+            # template_folder='web/templates'
+            )
+CORS(app, 
+   #   resources={r"/*": {"origins": "*"}}
+     )
+# app.config['CORS_HEADERS'] = 'application/json'
+# app.config['CORS_ORIGINS'] = ['*']
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -34,13 +38,14 @@ def redis_stream():
                movement = []
                for vehicle in objects:
                   x, y = vehicle.pos.x, vehicle.pos.y
+                  # car = json.dumps({'posx': x/50, 'posy': y/40})
+                  # movement.append(car)
                   movement.append({'posx': x/50, 'posy': y/40})
-                
+               # print(movement)   
                socketio.emit('redis data', movement)   
-run = True
+               # yield movement
+               
 def stream():
-   #  while run:
-   #    sleep(5)
       socketio.emit('frontend response', {"data":{
    "cars": random.randint(0, 100),
    "busses": random.randint(0, 100),
@@ -49,8 +54,6 @@ def stream():
 }})
 
 def stream2():
-    while run:
-      sleep(3) 
       socketio.emit('chart data', {"data":{
    {"phase1": random.randint(0, 60), "icon": 'phase1'},
    {"phase2": random.randint(0, 60), "icon": 'phase2'},
@@ -81,6 +84,10 @@ def handle_my_custom_event(json):
 def emitchart(json):
    print('received json: ' + str(json))
    stream2()   
+   
+@socketio.on('connect_error')
+def check_error(error):
+   print(error)
 
 if __name__ == '__main__':
    thread = Thread(target=redis_stream)
