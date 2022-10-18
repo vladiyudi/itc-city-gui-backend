@@ -13,15 +13,13 @@ from db import chart_data
 import json
 
 app = Flask(__name__, 
-            # static_url_path='/static', 
-            # static_folder='web/static',
-            # template_folder='web/templates'
+            static_url_path='/static', 
+            static_folder='web/static',
+            template_folder='web/templates'
             )
-CORS(app, 
-   #   resources={r"/*": {"origins": "*"}}
-     )
-# app.config['CORS_HEADERS'] = 'application/json'
-# app.config['CORS_ORIGINS'] = ['*']
+CORS(app, resources={r"/*": {"origins": "*"}})
+app.config['CORS_HEADERS'] = 'application/json'
+app.config['CORS_ORIGINS'] = ['*']
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -42,8 +40,8 @@ def redis_stream():
                   # movement.append(car)
                   movement.append({'posx': x/50, 'posy': y/40})
                # print(movement)   
-               socketio.emit('redis data', movement)   
-               # yield movement
+               # socketio.emit('redis data', movement) 
+               yield movement
                
 def stream():
       socketio.emit('frontend response', {"data":{
@@ -63,6 +61,10 @@ def stream2():
    {"phase6": random.randint(0, 60), "icon": 'phase6'},
 
 }})
+      
+@app.route('/redis-stream')
+def redis_data():
+   return Response(redis_stream(), mimetype='application/json')      
 
 @app.route('/traffic-volume', methods=['GET'])
 @cross_origin(origins="*")
