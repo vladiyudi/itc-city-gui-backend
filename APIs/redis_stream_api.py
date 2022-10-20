@@ -4,7 +4,6 @@ import trafficmonitoring_pb2 as tm
 import redis 
 from threading import Lock
 import json
-from json import JSONEncoder
 import os
 
 redis_stream_api = Blueprint('redis_stream_api', __name__)
