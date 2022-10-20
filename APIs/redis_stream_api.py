@@ -5,6 +5,7 @@ import redis
 from threading import Lock
 import json
 from json import JSONEncoder
+import os
 
 redis_stream_api = Blueprint('redis_stream_api', __name__)
 
@@ -12,7 +13,10 @@ redis_stream_api = Blueprint('redis_stream_api', __name__)
 def redis_data():
    return Response(redis_stream(), mimetype='application/json') 
 
-r = redis.Redis('10.10.10.177', 6379)  
+REDIS_IP = os.getenv('REDIS_IP')
+REDIS_PORT = os.getenv('REDIS_PORT')
+
+r = redis.Redis(REDIS_IP, REDIS_PORT)
 
 lock = Lock()
 
@@ -28,6 +32,5 @@ def redis_stream():
                movement = []
                for vehicle in objects:
                   x, y = vehicle.pos.x, vehicle.pos.y
-                  if x > 0.1 and y > 0.1:
-                    movement.append({'posx': round(x/50, 2), 'posy': round(y/40, 2)})  
+                  movement.append({"posx": round(x/50, 2), "posy": round(y/40, 2)})  
                yield json.dumps(movement)

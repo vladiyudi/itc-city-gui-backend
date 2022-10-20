@@ -10,6 +10,10 @@ from APIs.traffic_volume_api import traffic_volume_api
 from APIs.vehicles_count_api import vehicles_count_api
 from APIs.bar_chart_api import bar_chart_api
 from APIs.redis_stream_api import redis_stream_api
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__, 
             static_url_path='/static', 
@@ -19,7 +23,7 @@ app = Flask(__name__,
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'application/json'
 app.config['CORS_ORIGINS'] = ['*']
-app.config['SECRET_KEY'] = 'secret!'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 app.register_blueprint(vehicales_api)  
 app.register_blueprint(traffic_volume_api)
@@ -27,6 +31,8 @@ app.register_blueprint(vehicles_count_api)
 app.register_blueprint(bar_chart_api)
 app.register_blueprint(redis_stream_api)
 
+SERVER_PORT = os.getenv('SERVER_PORT')
+SERVER_IP = os.getenv('SERVER_IP')
 
 if __name__ == '__main__':
-   app.run(debug=True)
+   app.run(debug=True, host=SERVER_IP,  port=SERVER_PORT)
