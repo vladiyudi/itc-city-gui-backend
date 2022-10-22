@@ -13,6 +13,7 @@ from APIs.redis_stream_api import redis_stream_api
 from APIs.register_api import register_api
 from APIs.login_api import login_api
 from APIs.get_user_api import get_user_api
+from APIs.logout_api import logout_api
 from dotenv import load_dotenv
 import os
 from auth import db
@@ -56,6 +57,7 @@ app.register_blueprint(redis_stream_api)
 app.register_blueprint(register_api)
 app.register_blueprint(login_api)
 app.register_blueprint(get_user_api)
+app.register_blueprint(logout_api)
 
 
 server_session=Session(app)

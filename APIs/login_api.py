@@ -24,7 +24,6 @@ def login():
     
     if bcrypt.check_password_hash(user.password, password):
         session['user_id'] = user.id
-        # session.clear()
         print(session)
         return jsonify({"id":user.id, "email":user.email, "username":user.username})
     else:

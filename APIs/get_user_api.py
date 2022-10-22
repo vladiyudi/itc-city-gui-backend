@@ -9,12 +9,10 @@ get_user_api = Blueprint('get_user_api', __name__)
 def get_user():
     session_data = session.get('user_id')
     print(session_data)
-    # session.clear()
-    # user_id = session_data['user_id']
-    # print(user_id)
-    # if not user_id:
-    #     return jsonify({"message": "User not logged in"}), 401
+    user_id = session_data
+    print(user_id)
+    if not user_id:
+        return jsonify({"message": "User not logged in"}), 401
     
-    # user = USER.query.filter_by(id=user_id).first()
-    # return jsonify({"id":user.id, "email":user.email, "username":user.username})
-    return jsonify({"id":1, "email":""})
+    user = USER.query.filter_by(id=user_id).first()
+    return jsonify({"id":user.id, "email":user.email, "username":user.username}), 200
