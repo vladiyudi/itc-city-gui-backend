@@ -4,13 +4,17 @@ from auth import db, USER
 
 get_user_api = Blueprint('get_user_api', __name__)
 
-@get_user_api.route('/get-user', methods=['OPTIONS', 'POST', 'GET'])
-@cross_origin(origins="*")
+@get_user_api.route('/getuser', methods=['OPTIONS', 'POST', 'GET'])
+@cross_origin(origins="*", supports_credentials=True, headers=['Content-Type', 'Authorization'])
 def get_user():
-    user_id = session.get('user_id')
+    session_data = session.get('user_id')
+    print(session_data)
+    # session.clear()
+    # user_id = session_data['user_id']
+    # print(user_id)
+    # if not user_id:
+    #     return jsonify({"message": "User not logged in"}), 401
     
-    if not user_id:
-        return jsonify({"message": "User not logged in"}), 401
-    
-    user = USER.query.filter_by(id=user_id).first()
-    return jsonify({"id":user.id, "email":user.email, "username":user.username})
+    # user = USER.query.filter_by(id=user_id).first()
+    # return jsonify({"id":user.id, "email":user.email, "username":user.username})
+    return jsonify({"id":1, "email":""})
