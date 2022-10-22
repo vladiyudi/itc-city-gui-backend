@@ -8,9 +8,8 @@ get_user_api = Blueprint('get_user_api', __name__)
 @cross_origin(origins="*", supports_credentials=True, headers=['Content-Type', 'Authorization'])
 def get_user():
     session_data = session.get('user_id')
-    print(session_data)
     user_id = session_data
-    print(user_id)
+  
     if not user_id:
         return jsonify({"message": "You are not logged in"}), 401
     
