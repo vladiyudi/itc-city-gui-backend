@@ -12,7 +12,7 @@ def get_user():
     user_id = session_data
     print(user_id)
     if not user_id:
-        return jsonify({"message": "User not logged in"}), 401
+        return jsonify({"message": "You are not logged in"}), 401
     
     user = USER.query.filter_by(id=user_id).first()
     return jsonify({"id":user.id, "email":user.email, "username":user.username}), 200
