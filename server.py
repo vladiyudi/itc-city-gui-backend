@@ -2,7 +2,6 @@ from concurrent.futures import thread
 from distutils.log import debug
 from time import sleep
 from flask import Flask, session
-import trafficmonitoring_pb2 as tm
 from flask_cors import CORS, cross_origin
 from markupsafe import escape
 from APIs.vehicals_api import vehicales_api

@@ -31,5 +31,5 @@ def redis_stream():
                movement = []
                for vehicle in objects:
                   x, y = vehicle.pos.x, vehicle.pos.y
-                  movement.append({"posx": round(x/50, 2), "posy": round(y/40, 2)})  
+                  movement.append({"x": x, "y": y})  
                yield json.dumps(movement)
