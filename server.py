@@ -13,6 +13,8 @@ from APIs.register_api import register_api
 from APIs.login_api import login_api
 from APIs.get_user_api import get_user_api
 from APIs.logout_api import logout_api
+from APIs.itc_efficiency_api import itc_efficiency_api
+from APIs.benefits_api import benefits_api
 from dotenv import load_dotenv
 import os
 from auth import db
@@ -57,6 +59,8 @@ app.register_blueprint(register_api)
 app.register_blueprint(login_api)
 app.register_blueprint(get_user_api)
 app.register_blueprint(logout_api)
+app.register_blueprint(itc_efficiency_api)
+app.register_blueprint(benefits_api)
 
 
 server_session=Session(app)
