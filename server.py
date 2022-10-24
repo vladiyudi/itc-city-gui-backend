@@ -15,12 +15,14 @@ from APIs.get_user_api import get_user_api
 from APIs.logout_api import logout_api
 from APIs.itc_efficiency_api import itc_efficiency_api
 from APIs.benefits_api import benefits_api
+from APIs.policy_choose_api import policy_choose_api
 from dotenv import load_dotenv
 import os
 from auth import db
 import redis
 from flask_session import Session
 from flask.sessions import SecureCookieSessionInterface
+
 
 load_dotenv()
 
@@ -34,6 +36,8 @@ CORS(app,
    #   resources={
    # r"/*": {"origins": "*"}}, 
    supports_credentials=True)
+
+
 app.config['CORS_HEADERS'] = 'application/json'
 app.config['CORS_ORIGINS'] = ['*']
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
@@ -61,6 +65,7 @@ app.register_blueprint(get_user_api)
 app.register_blueprint(logout_api)
 app.register_blueprint(itc_efficiency_api)
 app.register_blueprint(benefits_api)
+app.register_blueprint(policy_choose_api)
 
 
 server_session=Session(app)
@@ -68,6 +73,7 @@ server_session=Session(app)
 db.init_app(app)
 with app.app_context():
       db.create_all()
+           
 
 SERVER_PORT = os.getenv('SERVER_PORT')
 SERVER_IP = os.getenv('SERVER_IP')
@@ -78,7 +84,9 @@ SERVER_IP = os.getenv('SERVER_IP')
 #     response.headers.add("Set-Cookie", f"my-cookie={same_cookie}; Secure; HttpOnly; SameSite=None; Path=/;")
 #     return response
 
+
+
 if __name__ == '__main__':
-   app.run(debug=True, host=SERVER_IP,  port=SERVER_PORT)
+   app.run(debug=True, host="0.0.0.0",  port=SERVER_PORT)
   
 
