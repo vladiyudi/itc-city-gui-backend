@@ -1,21 +1,18 @@
 from flask import Blueprint, request, session
-from auth import db, USER
-import json
-import os
-import requests
+from Views.ViewApi import ViewAPI
+from Models.ModelsAPI import ModelsAPI
 
 policy_choose_api = Blueprint('policy_choose_api', __name__)
 
-slack = os.getenv('SLACK_WEBHOOK')
-
 @policy_choose_api.route('/policy-choose', methods=['POST'])
 def policy_choose():
-    user_id = session.get('user_id')
-    user = USER.query.filter_by(id=user_id).first()
-    data = request.get_json()
     
-    slack_message = {'text': f'User {user.username} has chosen policy'}
+    user_id = ModelsAPI().velidate_user()
     
-    requests.post(slack, data=json.dumps(slack_message), headers={'Content-Type': 'application/json'})
+    if not user_id:
+        return {"message": "You are not logged in or unathorized"}, 401
     
-    return {"user": user.username}
+    user = ViewAPI(user_id).get_user_by_id()
+    ViewAPI(user_id).send_slack_message(user.username, request.json)   
+    
+    return {"user": user.username}, 200

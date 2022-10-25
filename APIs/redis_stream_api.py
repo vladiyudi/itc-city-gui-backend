@@ -5,11 +5,18 @@ import redis
 from threading import Lock
 import json
 import os
+from Models.ModelsAPI import ModelsAPI
 
 redis_stream_api = Blueprint('redis_stream_api', __name__)
 
 @redis_stream_api.route('/redis-stream', methods=['GET'])
 def redis_data():
+   
+   # user_id = ModelsAPI().velidate_user()
+    
+   # if not user_id:
+   #      return {"message": "You are not logged in or unathorized"}, 401
+   
    return Response(redis_stream(), mimetype='application/json') 
 
 REDIS_IP = os.getenv('REDIS_IP')
