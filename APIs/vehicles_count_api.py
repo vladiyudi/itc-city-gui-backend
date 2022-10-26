@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from flask_cors import cross_origin
 import random
 from Models.ModelsAPI import ModelsAPI
+from Views.Pandas import Pandas
 
 vehicles_count_api = Blueprint('vehicles_count_api', __name__)
 
@@ -13,13 +14,20 @@ def vehicles_count():
         return {"message": "You are not logged in or unathorized"}, 401
     
     
-    start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
-    all = request.args.get('all')
+    start_date = str(request.args.get('start_date'))
+    end_date = str(request.args.get('end_date'))
+    
+    if start_date == 'undefined':
+       start_date = '00:00:00'
+    
+    if end_date == 'undefined':   
+        end_date = '23:45:00'
+    
+    vehicals = Pandas().count_vehicles(start_date, end_date)
 
     return {"data":{
-   "cars": random.randint(0, 100),
-   "busses": random.randint(0, 100),
-   "trucks": random.randint(0, 100),
-   "pedestrans": random.randint(0, 100),
+   "cars": vehicals['cars'],
+   "busses": vehicals['busses'],
+   "trucks": vehicals['trucks'],
+   "pedestrians": random.randint(0, 100),
 }}   

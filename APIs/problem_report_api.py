@@ -12,7 +12,6 @@ def problem_report():
         return {"message": "You are not logged in or unathorized"}, 401
     
     user = ViewAPI(user_id).get_user_by_id()
-    
     ViewAPI(user_id).send_slack_message(user.username, request.json, "problem_report") 
     
     return {"user": user.username}, 200

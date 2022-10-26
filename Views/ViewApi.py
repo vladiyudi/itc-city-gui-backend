@@ -66,7 +66,6 @@ class ViewAPI:
         requests.post(self.slack, data=json.dumps(slack_message),
                       headers={'Content-Type': 'application/json'})
 
-
     def redis_stream():
         global lock
         channel = r.pubsub()
@@ -81,3 +80,4 @@ class ViewAPI:
                         x, y = vehicle.pos.x, vehicle.pos.y
                         movement.append({"x": x, "y": y})  
                     yield json.dumps(movement)     
+            
