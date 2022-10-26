@@ -3,7 +3,14 @@ import json
 import os
 import requests
 from flask_bcrypt import Bcrypt
+import trafficmonitoring_pb2 as tm
+import redis 
+from threading import Lock
 
+REDIS_IP = os.getenv('REDIS_IP')
+REDIS_PORT = os.getenv('REDIS_PORT')
+r = redis.Redis(REDIS_IP, REDIS_PORT)
+lock = Lock()
 
 class ViewAPI:
     def __init__(self, user_id):
@@ -58,3 +65,19 @@ class ViewAPI:
                     {'text': f'User {user} has requsted new settings {json.dumps(message)}'}]}
         requests.post(self.slack, data=json.dumps(slack_message),
                       headers={'Content-Type': 'application/json'})
+
+
+    def redis_stream():
+        global lock
+        channel = r.pubsub()
+        channel.subscribe('CellGridMapClose')
+        for msg in channel.listen():   
+            if msg['type'] == 'message': 
+                    obj = tm.CellGridMapping()
+                    obj.ParseFromString(msg['data'])
+                    objects = obj.objects
+                    movement = []
+                    for vehicle in objects:
+                        x, y = vehicle.pos.x, vehicle.pos.y
+                        movement.append({"x": x, "y": y})  
+                    yield json.dumps(movement)     
