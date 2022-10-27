@@ -1,11 +1,6 @@
 from flask import Blueprint, request, jsonify, session
 from flask_cors import cross_origin
-from auth import db, USER
-from flask_bcrypt import Bcrypt
-
-
-
-bcrypt = Bcrypt()
+from Views.ViewApi import ViewAPI
 
 
 login_api = Blueprint('login_api', __name__)
@@ -15,16 +10,13 @@ login_api = Blueprint('login_api', __name__)
 def login():
     email = request.json['email']
     password = request.json['password']   
-    user = USER.query.filter_by(email=email).first()
-    
-    print(session)
-    
+    user = ViewAPI(None).get_user_by_email(email) 
     if user is None:
         return jsonify({"message": "User does not exist"}), 401
     
-    if bcrypt.check_password_hash(user.password, password):
+    if ViewAPI(None).check_password(password, user):
         session['user_id'] = user.id
-        print(session)
-        return jsonify({"id":user.id, "email":user.email, "username":user.username})
+        return jsonify({"id":user.id, "email":user.email, "username":user.username}), 200
     else:
         return jsonify({"message": "Wrong password"}), 400
+    
