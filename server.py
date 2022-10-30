@@ -17,6 +17,7 @@ from APIs.itc_efficiency_api import itc_efficiency_api
 from APIs.benefits_api import benefits_api
 from APIs.policy_choose_api import policy_choose_api
 from APIs.problem_report_api import problem_report_api
+from APIs.vehicles_realtime_api import vehicles_realtime_api
 from dotenv import load_dotenv
 import os
 from auth import db
@@ -68,6 +69,7 @@ app.register_blueprint(itc_efficiency_api)
 app.register_blueprint(benefits_api)
 app.register_blueprint(policy_choose_api)
 app.register_blueprint(problem_report_api)
+app.register_blueprint(vehicles_realtime_api)
 
 
 server_session=Session(app)
