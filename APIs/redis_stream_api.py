@@ -1,10 +1,7 @@
 from flask import Blueprint, Response
 from flask_cors import cross_origin
 import trafficmonitoring_pb2 as tm
-import redis 
 from threading import Lock
-import json
-import os
 from Models.ModelsAPI import ModelsAPI
 from Views.ViewApi import ViewAPI
 

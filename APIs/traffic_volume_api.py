@@ -14,14 +14,14 @@ def traffic_volume():
     if not user_id:
         return {"message": "You are not logged in or unathorized"}, 401
     
-    # vehicle = Pandas().find_vehicle('truck')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    all = request.args.get('all')
+    car = request.args.get('cars')
+    bus = request.args.get('bus')
+    truck = request.args.get('trucks')
     
-    # print (vehicle)
-    
-    # all = Pandas().get_all_vehicles()
-    
-    start_date = str(request.args.get('start_date'))
-    end_date = str(request.args.get('end_date'))
+    print (all, car, bus)
     
     if start_date == 'undefined':
        start_date = '00:00:00'
@@ -29,9 +29,15 @@ def traffic_volume():
     if end_date == 'undefined':   
         end_date = '23:45:00'
     
-    test = Pandas().test()
-    
-    chart = Pandas().build_basic_chart(start_date, end_date)
-    
-    
-    return {"data":chart}
+    if all == 'true':
+        print ("all")
+        chart = Pandas().build_basic_chart(start_date, end_date)
+    elif car == 'true':
+        chart = Pandas().build_vehicles_chart(start_date, end_date, 'car') 
+    elif truck == 'true':
+        chart = Pandas().build_vehicles_chart(start_date, end_date, 'truck') 
+        
+        
+    lane = Pandas().get_lanes(start_date, end_date)      
+
+    return {"data":chart, "lanes": lane}

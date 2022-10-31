@@ -1,5 +1,4 @@
 from flask import Blueprint
-from flask_cors import cross_origin
 import random
 from Models.ModelsAPI import ModelsAPI
 

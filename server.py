@@ -1,8 +1,7 @@
 from concurrent.futures import thread
 from distutils.log import debug
-from time import sleep
-from flask import Flask, session
-from flask_cors import CORS, cross_origin
+from flask import Flask
+from flask_cors import CORS
 from markupsafe import escape
 from APIs.vehicals_api import vehicales_api
 from APIs.traffic_volume_api import traffic_volume_api
@@ -18,10 +17,10 @@ from APIs.benefits_api import benefits_api
 from APIs.policy_choose_api import policy_choose_api
 from APIs.problem_report_api import problem_report_api
 from APIs.vehicles_realtime_api import vehicles_realtime_api
+from APIs.history_traffic_api import history_traffic_api
 from dotenv import load_dotenv
 import os
 from auth import db
-import redis
 from flask_session import Session
 from flask.sessions import SecureCookieSessionInterface
 
@@ -70,6 +69,7 @@ app.register_blueprint(benefits_api)
 app.register_blueprint(policy_choose_api)
 app.register_blueprint(problem_report_api)
 app.register_blueprint(vehicles_realtime_api)
+app.register_blueprint(history_traffic_api)
 
 
 server_session=Session(app)
