@@ -2,12 +2,14 @@ from time import strftime
 import pandas as pd
 import re
 import datetime as dt
+import glob
 
 class Pandas:
     def __init__(self):
         self.df = pd.read_csv('TLVTrafficCounting15-2022-08-22.csv')
         self.df2 = pd.read_csv('IRoadsTrafficCounting-2022-08-22.csv')
-        self.days = [{'2022-10-28':self.df2}, {'2022-10-29': self.df}, {'2022-10-30': self.df2},{'2022-10-31':self.df}]
+        self.days = []
+        self.dataset = glob.glob('TLV CVC/*.csv')
         
     def get_all_days(self):
         day1 = self.df.loc[ : , self.df.columns !='Start']
@@ -20,6 +22,34 @@ class Pandas:
         sum['Start'] = start  
         sum['End'] = end
         return sum
+    
+    def build_multipledays_chart(self, start_date, end_date, vehicle):
+        for file in self.dataset:
+            df = pd.read_csv(file)
+            key = int(file.split('-')[1].split('.')[0])
+            self.days.append({key:df}) 
+        self.days.sort(key=lambda x: list(x.keys())[0])
+        
+        check = list(self.days[0].values())[0]
+        
+        vehicle_columns = self.get_cols(check)[vehicle]
+    
+        
+        chart = []
+        
+        for day in self.days:
+            d = list(day.values())[0]
+            sum = 0
+            for column in vehicle_columns:
+               sum += d[column].sum()
+            now = list(str(list(day.keys())[0]))
+            now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
+            chart.append([now, int(sum)])     
+        
+        return chart
+            
+      
+          
     
     def get_period_dates(self, start_date, end_date):
         append = False
@@ -186,6 +216,28 @@ class Pandas:
         for column in self.df.columns:
             if re.search(type, column):
                 lane.append(column)
-        return lane        
+        return lane      
+    
+    def get_cols(self, source):
+        vehicle_columns = []
+        car=[]
+        bus = []
+        truck = []
+        van = []
+        motorbike = []
+        for column in source.columns:
+            if re.search('(car|truck|bus|motorbike|van)', column):
+                vehicle_columns.append(column)
+            if re.search('car', column):
+                car.append(column)  
+            if re.search('bus', column):
+                bus.append(column)
+            if re.search('truck', column):
+                truck.append(column)   
+            if re.search('van', column):
+                van.append(column)  
+            if re.search('motorbike', column):
+                motorbike.append(column)                        
+        return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck, "van":van, "motorbike":motorbike}           
     
  

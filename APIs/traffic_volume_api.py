@@ -52,6 +52,6 @@ def traffic_volume():
     else: 
         chart['peds'] = zero            
         
-    lane = Pandas().get_lanes(start_date, end_date)      
-
+    lane = Pandas().get_lanes(start_date, end_date)   
+    
     return {"data":chart, "lanes": lane}
