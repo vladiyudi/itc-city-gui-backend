@@ -60,6 +60,8 @@ class Pandas:
         car=[]
         bus = []
         truck = []
+        van = []
+        motorbike = []
         for column in self.df.columns:
             if re.search('(car|truck|bus|motorbike|van)', column):
                 vehicle_columns.append(column)
@@ -68,10 +70,12 @@ class Pandas:
             if re.search('bus', column):
                 bus.append(column)
             if re.search('truck', column):
-                truck.append(column)          
-        # print (vehicle_columns)
-                
-        return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck}            
+                truck.append(column)   
+            if re.search('van', column):
+                van.append(column)  
+            if re.search('motorbike', column):
+                motorbike.append(column)                        
+        return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck, "van":van, "motorbike":motorbike}         
         
         
     def build_basic_chart(self, start_time, end_time):
@@ -116,7 +120,6 @@ class Pandas:
     def build_vehicles_chart(self, start_time, end_time, vehicle):
         period = self.get_time_period(start_time, end_time)
         vehicle_columns = self.get_vehicals_columns()[vehicle]
-        print(vehicle_columns)
         chart = []
         for i, row in period.iterrows():
             time = row['Start']
@@ -124,8 +127,17 @@ class Pandas:
             sum = 0
             for column in vehicle_columns:
                 sum += row[column]
-                chart.append([time, sum])
+            chart.append([time, sum])  
         return chart  
+    
+    def build_zero_chart(self, start_time, end_time):
+        period = self.get_time_period(start_time, end_time)
+        chart = []
+        for i, row in period.iterrows():
+            time = row['Start']
+            time = pd.to_datetime(time)
+            chart.append([time, 0])
+        return chart
     
     def get_lanes(self, start_time, end_time):
         period = self.get_time_period(start_time, end_time)
