@@ -8,21 +8,32 @@ history_traffic_api = Blueprint('history_traffic_api', __name__)
 def history_traffic():
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
-    allDays = request.args.get('allDays')
     chart_data = {"all": 0, "car": 0, "bus": 0, "truck": 0, "peds": 0}
-    # car = request.args.get('cars')
-    # bus = request.args.get('bus')
-    # truck = request.args.get('trucks')
-    # print(start_date, end_date)
-    # chart = Pandas().build_history_chart("all", start_date, end_date)
-    # print (chart)
+    args = request.args
+    zero = Pandas().build_zero_history_chart(start_date, end_date)
     
-    # chart_data['all'] = Pandas().build_multipledays_chart(start_date, end_date, 'all')  
-    # chart_data['car'] = Pandas().build_multipledays_chart(start_date, end_date, 'car') 
-    # chart_data['truck'] = Pandas().build_multipledays_chart(start_date, end_date, 'truck') 
-    # chart_data['all'] = Pandas().build_multipledays_chart(start_date, end_date, 'van') 
-    # chart_data['all'] = Pandas().build_multipledays_chart(start_date, end_date, 'motorbike') 
+    if args['allVehicles'] == 'true':
+        chart_data['all'] = Pandas().build_multipledays_chart(start_date, end_date, 'all') 
+    else: 
+        chart_data['all'] = zero    
+    if args['cars'] == 'true':
+        chart_data['car'] = Pandas().build_multipledays_chart(start_date, end_date, 'car')
+    else:
+        chart_data['car'] = zero  
+    if args['trucks'] == 'true':     
+        chart_data['truck'] = Pandas().build_multipledays_chart(start_date, end_date, 'truck')
+    else:
+        chart_data['truck'] = zero
+    if args['buses']== 'true':       
+        chart_data['bus'] = Pandas().build_multipledays_chart(start_date, end_date, 'van')
+    else:
+        chart_data['bus'] = zero    
+    if args['pedestrians'] == 'true':    
+        chart_data['peds'] = Pandas().build_multipledays_chart(start_date, end_date, 'motorbike')
+    else:
+        chart_data['peds'] = zero    
     
-    chart_data = Pandas().build_multipledays_chart(start_date, end_date, 'all') 
+    days = Pandas().get_days()
+    print(days)
         
     return chart_data

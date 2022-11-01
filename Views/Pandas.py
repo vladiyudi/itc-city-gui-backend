@@ -8,35 +8,13 @@ class Pandas:
     def __init__(self):
         self.df = pd.read_csv('TLVTrafficCounting15-2022-08-22.csv')
         self.df2 = pd.read_csv('IRoadsTrafficCounting-2022-08-22.csv')
-        self.days = []
         self.dataset = glob.glob('TLV CVC/*.csv')
-        
-    def get_all_days(self):
-        day1 = self.df.loc[ : , self.df.columns !='Start']
-        day2 = self.df2.loc[ : , self.df2.columns !='Start']
-        day1 = self.df.loc[ : , self.df.columns !='End']
-        day2 = self.df2.loc[ : , self.df2.columns !='End']
-        start = self.df['Start']
-        end = self.df['End']
-        sum = day1.add(day2, fill_value=0)
-        sum['Start'] = start  
-        sum['End'] = end
-        return sum
+        self.days = self.get_days()
     
     def build_multipledays_chart(self, start_date, end_date, vehicle):
-        for file in self.dataset:
-            df = pd.read_csv(file)
-            key = int(file.split('-')[1].split('.')[0])
-            self.days.append({key:df}) 
-        self.days.sort(key=lambda x: list(x.keys())[0])
-        
         check = list(self.days[0].values())[0]
-        
         vehicle_columns = self.get_cols(check)[vehicle]
-    
-        
         chart = []
-        
         for day in self.days:
             d = list(day.values())[0]
             sum = 0
@@ -45,10 +23,24 @@ class Pandas:
             now = list(str(list(day.keys())[0]))
             now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
             chart.append([now, int(sum)])     
-        
         return chart
+    
+    def get_days (self):
+        days = []
+        for file in self.dataset:
+            df = pd.read_csv(file)
+            key = int(file.split('-')[1].split('.')[0])
+            days.append({key:df}) 
+            days = sorted(days, key=lambda x: list(x.keys())[0])
+        return days
             
-      
+    def build_zero_history_chart(self, start_date, end_date):
+        chart = []
+        for day in self.days:
+            now = list(str(list(day.keys())[0]))
+            now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
+            chart.append([now, 0]) 
+        return chart
           
     
     def get_period_dates(self, start_date, end_date):
@@ -63,28 +55,7 @@ class Pandas:
             if d == end_date:
                 return period   
             
-            
-                           
-              
-    def build_history_chart(self, veichle, start_date, end_date): 
-        period = self.get_period_dates(start_date, end_date)
-        vehicle_columns = self.get_vehicals_columns()[veichle]
-        chart = []
-  
-        for day in period:
-            sum = 0    
-            d=list(day.values())[0]
-            for column in vehicle_columns:
-                sum += d[column].sum()
-        chart.append([list(day.keys())[0], sum])        
-        
-        # for column in vehicle_columns:
-        #     sum+= table[column].sum()
-        #     # sum = table[column].sum()
-        #     # chart.append([column, sum])
-        return chart
-        
-        
+                 
     def get_vehicals_columns(self):
         vehicle_columns = []
         car=[]
