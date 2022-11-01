@@ -15,7 +15,8 @@ class Pandas:
         check = list(self.days[0].values())[0]
         vehicle_columns = self.get_cols(check)[vehicle]
         chart = []
-        for day in self.days:
+        days = self.get_history_period(start_date, end_date)
+        for day in days:
             d = list(day.values())[0]
             sum = 0
             for column in vehicle_columns:
@@ -36,26 +37,26 @@ class Pandas:
             
     def build_zero_history_chart(self, start_date, end_date):
         chart = []
-        for day in self.days:
+        days = self.get_history_period(start_date, end_date)
+        for day in days:
             now = list(str(list(day.keys())[0]))
             now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
             chart.append([now, 0]) 
         return chart
-          
     
-    def get_period_dates(self, start_date, end_date):
-        append = False
+    def get_history_period(self, start_date, end_date):
+        control = False
         period = []
         for day in self.days:
-            d = pd.to_datetime(list(day.keys())[0]).date().strftime("%Y-%m-%d")
-            if d == start_date:
-                append = True
-            if append:
-                period.append(day)
-            if d == end_date:
-                return period   
-            
-                 
+          now = list(str(list(day.keys())[0]))
+          now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
+          if now == start_date:
+            control = True
+          if control:
+            period.append(day)
+          if now == end_date:
+            return period    
+                   
     def get_vehicals_columns(self):
         vehicle_columns = []
         car=[]

@@ -32,8 +32,5 @@ def history_traffic():
         chart_data['peds'] = Pandas().build_multipledays_chart(start_date, end_date, 'motorbike')
     else:
         chart_data['peds'] = zero    
-    
-    days = Pandas().get_days()
-    print(days)
-        
+         
     return chart_data
