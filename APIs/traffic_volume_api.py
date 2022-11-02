@@ -44,11 +44,11 @@ def traffic_volume():
     else:
         chart['truck'] = zero   
     if bus == 'true':
-        chart["bus"] = Pandas().build_vehicles_chart(start_date, end_date, 'van')
+        chart["bus"] = Pandas().build_vehicles_chart(start_date, end_date, 'bus')
     else: 
         chart['bus'] = zero    
     if peds == 'true':
-        chart["peds"] = Pandas().build_vehicles_chart(start_date, end_date, 'motorbike')
+        chart["peds"] = Pandas().build_vehicles_chart(start_date, end_date, 'person')
     else: 
         chart['peds'] = zero            
         

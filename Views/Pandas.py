@@ -6,23 +6,28 @@ import glob
 
 class Pandas:
     def __init__(self):
-        self.df = pd.read_csv('TLVTrafficCounting15-2022-08-22.csv')
+        # self.df = pd.read_csv('TLVTrafficCounting15-2022-08-22.csv')
+        self.df = pd.read_csv('GoldCoast/GoldenCoastTrafficCounting-2022-10-23.csv')
         self.df2 = pd.read_csv('IRoadsTrafficCounting-2022-08-22.csv')
-        self.dataset = glob.glob('TLV CVC/*.csv')
+        # self.dataset = glob.glob('TLV CVC/*.csv')
+        self.dataset = glob.glob('GoldCoast/*.csv')
         self.days = self.get_days()
     
     def build_multipledays_chart(self, start_date, end_date, vehicle):
         check = list(self.days[0].values())[0]
         vehicle_columns = self.get_cols(check)[vehicle]
         chart = []
+        print(vehicle_columns)
         days = self.get_history_period(start_date, end_date)
+        print(days)
         for day in days:
             d = list(day.values())[0]
             sum = 0
             for column in vehicle_columns:
                sum += d[column].sum()
             now = list(str(list(day.keys())[0]))
-            now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
+            # now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
+            now = now[0]+now[1]+now[2]+now[3]+"-"+now[4]+now[5]+"-"+now[6]+now[7]
             chart.append([now, int(sum)])     
         return chart
     
@@ -30,7 +35,9 @@ class Pandas:
         days = []
         for file in self.dataset:
             df = pd.read_csv(file)
-            key = int(file.split('-')[1].split('.')[0])
+            # key = int(file.split('-')[1].split('.')[0])
+            x = file.split('-')
+            key = int(x[1]+x[2] +x[3].split('.')[0])
             days.append({key:df}) 
             days = sorted(days, key=lambda x: list(x.keys())[0])
         return days
@@ -40,16 +47,19 @@ class Pandas:
         days = self.get_history_period(start_date, end_date)
         for day in days:
             now = list(str(list(day.keys())[0]))
-            now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
+            now = now[0]+now[1]+now[2]+now[3]+"-"+now[4]+now[5]+"-"+now[6]+now[7]
+            # now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
             chart.append([now, 0]) 
         return chart
     
     def get_history_period(self, start_date, end_date):
         control = False
         period = []
+        print (start_date)
         for day in self.days:
           now = list(str(list(day.keys())[0]))
-          now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
+          now = now[0]+now[1]+now[2]+now[3]+"-"+now[4]+now[5]+"-"+now[6]+now[7]
+        #   now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
           if now == start_date:
             control = True
           if control:
@@ -64,8 +74,9 @@ class Pandas:
         truck = []
         van = []
         motorbike = []
+        person = []
         for column in self.df.columns:
-            if re.search('(car|truck|bus|motorbike|van)', column):
+            if re.search('(car|truck|bus|motorbike|van|person)', column):
                 vehicle_columns.append(column)
             if re.search('car', column):
                 car.append(column)  
@@ -76,8 +87,10 @@ class Pandas:
             if re.search('van', column):
                 van.append(column)  
             if re.search('motorbike', column):
-                motorbike.append(column)                        
-        return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck, "van":van, "motorbike":motorbike}         
+                motorbike.append(column) 
+            if re.search('person',column):
+                person.append(column)                           
+        return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck, "van":van, "motorbike":motorbike, 'person':person}         
         
         
     def build_basic_chart(self, start_time, end_time):
@@ -197,8 +210,9 @@ class Pandas:
         truck = []
         van = []
         motorbike = []
+        person=[]
         for column in source.columns:
-            if re.search('(car|truck|bus|motorbike|van)', column):
+            if re.search('(car|truck|bus|motorbike|van|person)', column):
                 vehicle_columns.append(column)
             if re.search('car', column):
                 car.append(column)  
@@ -209,7 +223,9 @@ class Pandas:
             if re.search('van', column):
                 van.append(column)  
             if re.search('motorbike', column):
-                motorbike.append(column)                        
-        return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck, "van":van, "motorbike":motorbike}           
+                motorbike.append(column) 
+            if re.search('person',column):
+                person.append(column)                             
+        return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck, "van":van, "motorbike":motorbike, 'person':person}
     
  

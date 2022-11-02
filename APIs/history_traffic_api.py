@@ -10,6 +10,11 @@ def history_traffic():
     end_date = request.args.get('end_date')
     chart_data = {"all": 0, "car": 0, "bus": 0, "truck": 0, "peds": 0}
     args = request.args
+    
+    
+    # day = Pandas().get_days()
+    # print(day)
+    
     zero = Pandas().build_zero_history_chart(start_date, end_date)
     
     if args['allVehicles'] == 'true':
@@ -25,12 +30,14 @@ def history_traffic():
     else:
         chart_data['truck'] = zero
     if args['buses']== 'true':       
-        chart_data['bus'] = Pandas().build_multipledays_chart(start_date, end_date, 'van')
+        chart_data['bus'] = Pandas().build_multipledays_chart(start_date, end_date, 'bus')
     else:
         chart_data['bus'] = zero    
     if args['pedestrians'] == 'true':    
-        chart_data['peds'] = Pandas().build_multipledays_chart(start_date, end_date, 'motorbike')
+        chart_data['peds'] = Pandas().build_multipledays_chart(start_date, end_date, 'person')
     else:
-        chart_data['peds'] = zero    
+        chart_data['peds'] = zero   
+        
+    print(chart_data)     
          
     return chart_data
