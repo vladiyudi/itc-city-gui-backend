@@ -12,32 +12,32 @@ def history_traffic():
     args = request.args
     
     
-    # day = Pandas().get_days()
-    # print(day)
+    directions = {'north_south': False, 'south_north': False, 'east_west': False, 'west_east': False} 
+    for key in directions:
+        directions[key]=request.args.get(key)   
+           
     
     zero = Pandas().build_zero_history_chart(start_date, end_date)
     
     if args['allVehicles'] == 'true':
-        chart_data['all'] = Pandas().build_multipledays_chart(start_date, end_date, 'all') 
+        chart_data['all'] = Pandas().build_multipledays_chart(start_date, end_date, 'all', directions) 
     else: 
         chart_data['all'] = zero    
     if args['cars'] == 'true':
-        chart_data['car'] = Pandas().build_multipledays_chart(start_date, end_date, 'car')
+        chart_data['car'] = Pandas().build_multipledays_chart(start_date, end_date, 'car', directions)
     else:
         chart_data['car'] = zero  
     if args['trucks'] == 'true':     
-        chart_data['truck'] = Pandas().build_multipledays_chart(start_date, end_date, 'truck')
+        chart_data['truck'] = Pandas().build_multipledays_chart(start_date, end_date, 'truck', directions)
     else:
         chart_data['truck'] = zero
     if args['buses']== 'true':       
-        chart_data['bus'] = Pandas().build_multipledays_chart(start_date, end_date, 'bus')
+        chart_data['bus'] = Pandas().build_multipledays_chart(start_date, end_date, 'bus', directions)
     else:
         chart_data['bus'] = zero    
     if args['pedestrians'] == 'true':    
-        chart_data['peds'] = Pandas().build_multipledays_chart(start_date, end_date, 'person')
+        chart_data['peds'] = Pandas().build_multipledays_chart(start_date, end_date, 'person', directions)
     else:
         chart_data['peds'] = zero   
-        
-    print(chart_data)     
-         
+               
     return chart_data

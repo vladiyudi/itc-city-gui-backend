@@ -27,28 +27,32 @@ def traffic_volume():
     
     if end_date == 'undefined':   
         end_date = '23:45:00'
+        
+    directions = {'north_south': False, 'south_north': False, 'east_west': False, 'west_east': False} 
+    for key in directions:
+        directions[key]=request.args.get(key)     
      
     chart = {"all": 0, "car": 0, "bus": 0, "truck": 0, "peds": 0}  
     zero = Pandas().build_zero_chart(start_date, end_date) 
     
     if all == 'true':
-        chart["all"] = Pandas().build_basic_chart(start_date, end_date)
+        chart["all"] = Pandas().build_vehicles_chart(start_date, end_date, 'all', directions)
     else: 
         chart["all"] = zero    
     if car == 'true':
-        chart["car"] = Pandas().build_vehicles_chart(start_date, end_date, 'car') 
+        chart["car"] = Pandas().build_vehicles_chart(start_date, end_date, 'car', directions) 
     else:
         chart['car'] = zero   
     if truck == 'true':
-        chart["truck"] = Pandas().build_vehicles_chart(start_date, end_date, 'truck') 
+        chart["truck"] = Pandas().build_vehicles_chart(start_date, end_date, 'truck', directions) 
     else:
         chart['truck'] = zero   
     if bus == 'true':
-        chart["bus"] = Pandas().build_vehicles_chart(start_date, end_date, 'bus')
+        chart["bus"] = Pandas().build_vehicles_chart(start_date, end_date, 'bus', directions)
     else: 
         chart['bus'] = zero    
     if peds == 'true':
-        chart["peds"] = Pandas().build_vehicles_chart(start_date, end_date, 'person')
+        chart["peds"] = Pandas().build_vehicles_chart(start_date, end_date, 'person', directions)
     else: 
         chart['peds'] = zero            
         

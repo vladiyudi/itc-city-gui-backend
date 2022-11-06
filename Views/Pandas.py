@@ -12,13 +12,12 @@ class Pandas:
         self.dataset = glob.glob('GoldCoast/*.csv')
         self.days = self.get_days()
     
-    def build_multipledays_chart(self, start_date, end_date, vehicle):
+    def build_multipledays_chart(self, start_date, end_date, vehicle, directions):
         check = list(self.days[0].values())[0]
         vehicle_columns = self.get_cols(check)[vehicle]
+        vehicle_columns = self.filter_by_direction(directions, vehicle_columns)
         chart = []
-        print(vehicle_columns)
         days = self.get_history_period(start_date, end_date)
-        print(days)
         for day in days:
             d = list(day.values())[0]
             sum = 0
@@ -54,7 +53,6 @@ class Pandas:
     def get_history_period(self, start_date, end_date):
         control = False
         period = []
-        print (start_date)
         for day in self.days:
           now = list(str(list(day.keys())[0]))
           now = now[0]+now[1]+now[2]+now[3]+"-"+now[4]+now[5]+"-"+now[6]+now[7]
@@ -93,21 +91,7 @@ class Pandas:
             if re.search('person',column):
                 person.append(column)                           
         return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck, "van":van, "motorbike":motorbike, 'person':person, 'vehicals':vehicals}         
-        
-        
-    def build_basic_chart(self, start_time, end_time):
-        period = self.get_time_period(start_time, end_time)
-        vehicle_columns = self.get_vehicals_columns()['all']
-        chart = []
-        for i, row in period.iterrows():
-            time = row['Start']
-            time = pd.to_datetime(time)
-            sum = 0
-            for column in vehicle_columns:
-                sum += row[column]
-            chart.append([time, sum])            
-        return chart  
-    
+           
     def get_time_period(self, start_time, end_time):
         start = '0'
         finish = '95'
@@ -118,6 +102,25 @@ class Pandas:
                 finish = i    
         period = self.df.iloc[start:finish]         
         return period
+    
+    def filter_by_direction(self, directions, columns):
+       ways = []
+       cols = []
+       if directions['north_south']=='true':
+           ways.append('1')
+       if directions['east_west']=='true':  
+           ways.append('2')
+       if directions['south_north']=='true':
+           ways.append('3')
+       if directions['west_east']=='true':
+           ways.append('4')
+              
+       for way in ways:
+           for column in columns:
+               if re.search("^"+way, column):
+                   cols.append(column)
+                                  
+       return cols
     
     def count_vehicles(self, start_time, end_time):
         period = self.get_time_period(start_time, end_time)
@@ -137,9 +140,10 @@ class Pandas:
                 ped += row[column]                 
         return {"cars": car, "busses": bus, "trucks": truck, "pedestrians": ped}   
     
-    def build_vehicles_chart(self, start_time, end_time, vehicle):
+    def build_vehicles_chart(self, start_time, end_time, vehicle, directions):
         period = self.get_time_period(start_time, end_time)
         vehicle_columns = self.get_vehicals_columns()[vehicle]
+        vehicle_columns = self.filter_by_direction(directions, vehicle_columns)
         chart = []
         for i, row in period.iterrows():
             time = row['Start']
@@ -194,7 +198,7 @@ class Pandas:
         
         for ped in peds:
             peds_cols[ped] = self.get_lanes_columns(ped, 'person')
-               
+                           
         for i, row in period.iterrows():
             for column in col11:
                 lanes['11']+= row[column]
