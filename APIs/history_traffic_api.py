@@ -15,28 +15,33 @@ def history_traffic():
     directions = {'north_south': False, 'south_north': False, 'east_west': False, 'west_east': False} 
     for key in directions:
         directions[key]=request.args.get(key)   
-           
-    
+        
+        
+    days = {'allDays':'true', 'mondays':'false', 'tuesdays':'false', 'wednesdays':'false', 'thursdays':'false', 'fridays':'false', 'saturdays':'false', 'sundays':'false', 'includeWeekends':'true', 'onlyWeekends':'false'} 
+    for key in days:
+        days[key]=request.args.get(key)
+        
+            
     zero = Pandas().build_zero_history_chart(start_date, end_date)
     
     if args['allVehicles'] == 'true':
-        chart_data['all'] = Pandas().build_multipledays_chart(start_date, end_date, 'all', directions) 
+        chart_data['all'] = Pandas().build_multipledays_chart(start_date, end_date, 'all', directions, days) 
     else: 
         chart_data['all'] = zero    
     if args['cars'] == 'true':
-        chart_data['car'] = Pandas().build_multipledays_chart(start_date, end_date, 'car', directions)
+        chart_data['car'] = Pandas().build_multipledays_chart(start_date, end_date, 'car', directions, days)
     else:
         chart_data['car'] = zero  
     if args['trucks'] == 'true':     
-        chart_data['truck'] = Pandas().build_multipledays_chart(start_date, end_date, 'truck', directions)
+        chart_data['truck'] = Pandas().build_multipledays_chart(start_date, end_date, 'truck', directions, days)
     else:
         chart_data['truck'] = zero
     if args['buses']== 'true':       
-        chart_data['bus'] = Pandas().build_multipledays_chart(start_date, end_date, 'bus', directions)
+        chart_data['bus'] = Pandas().build_multipledays_chart(start_date, end_date, 'bus', directions, days)
     else:
         chart_data['bus'] = zero    
     if args['pedestrians'] == 'true':    
-        chart_data['peds'] = Pandas().build_multipledays_chart(start_date, end_date, 'person', directions)
+        chart_data['peds'] = Pandas().build_multipledays_chart(start_date, end_date, 'person', directions, days)
     else:
         chart_data['peds'] = zero   
                

@@ -1,8 +1,9 @@
-from time import strftime
+from time import strftime, strptime
 import pandas as pd
 import re
 import datetime as dt
 import glob
+import calendar
 
 class Pandas:
     def __init__(self):
@@ -12,12 +13,13 @@ class Pandas:
         self.dataset = glob.glob('GoldCoast/*.csv')
         self.days = self.get_days()
     
-    def build_multipledays_chart(self, start_date, end_date, vehicle, directions):
+    def build_multipledays_chart(self, start_date, end_date, vehicle, directions, weekdays):
         check = list(self.days[0].values())[0]
         vehicle_columns = self.get_cols(check)[vehicle]
-        vehicle_columns = self.filter_by_direction(directions, vehicle_columns)
+        vehicle_columns = self.filter_by_direction(directions, vehicle_columns)        
         chart = []
         days = self.get_history_period(start_date, end_date)
+        days = self.filter_by_weekdays(weekdays, days)
         for day in days:
             d = list(day.values())[0]
             sum = 0
@@ -26,8 +28,58 @@ class Pandas:
             now = list(str(list(day.keys())[0]))
             # now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
             now = now[0]+now[1]+now[2]+now[3]+"-"+now[4]+now[5]+"-"+now[6]+now[7]
-            chart.append([now, int(sum)])     
+            chart.append([now, int(sum)])   
+            
         return chart
+    
+    def filter_by_weekdays(self, weekdays, period):
+        days = []
+        result = []
+        
+        if weekdays['allDays']=='true':
+            return self.filter_by_weekends(weekdays, period)
+        
+        if weekdays['mondays']=='true':
+            days.append(0)
+        if weekdays['tuesdays']=='true':
+            days.append(1)
+        if weekdays['wednesdays']=='true':
+            days.append(2)
+        if weekdays['thursdays']=='true':
+            days.append(3)
+        if weekdays['fridays']=='true':
+            days.append(4)
+        if weekdays['saturdays']=='true':
+            days.append(5)
+        if weekdays['sundays']=='true':
+            days.append(6)                        
+        
+        for day in period:
+            now = list(str(list(day.keys())[0]))
+            now = now[0]+now[1]+now[2]+now[3]+"-"+now[4]+now[5]+"-"+now[6]+now[7]
+            now = strptime(now, "%Y-%m-%d").tm_wday
+            for d in days:
+                if now == d:
+                  result.append(day)    
+                  
+        return result   
+    
+    
+    def filter_by_weekends(self, weekdays, period):
+      if weekdays['includeWeekends']=='true':
+        return period
+      else:
+          result = []
+          for day in period:
+            now = list(str(list(day.keys())[0]))
+            now = now[0]+now[1]+now[2]+now[3]+"-"+now[4]+now[5]+"-"+now[6]+now[7]
+            now = strptime(now, "%Y-%m-%d").tm_wday
+            if now == 5 or now == 6:
+              result.append(day)
+      return result     
+        
+    
+    
     
     def get_days (self):
         days = []
