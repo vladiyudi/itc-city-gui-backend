@@ -54,4 +54,4 @@ def traffic_volume():
         
     lane = Pandas().get_lanes(start_date, end_date)   
     
-    return {"data":chart, "lanes": lane}
+    return {"data":chart, "lanes": lane['vehicals'], 'peds': lane['peds']}

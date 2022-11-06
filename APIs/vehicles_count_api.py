@@ -29,5 +29,5 @@ def vehicles_count():
    "cars": vehicals['cars'],
    "busses": vehicals['busses'],
    "trucks": vehicals['trucks'],
-   "pedestrians": random.randint(0, 100),
+   "pedestrians": vehicals['pedestrians'],
 }}   

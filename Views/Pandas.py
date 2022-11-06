@@ -8,7 +8,6 @@ class Pandas:
     def __init__(self):
         # self.df = pd.read_csv('TLVTrafficCounting15-2022-08-22.csv')
         self.df = pd.read_csv('GoldCoast/GoldenCoastTrafficCounting-2022-10-23.csv')
-        self.df2 = pd.read_csv('IRoadsTrafficCounting-2022-08-22.csv')
         # self.dataset = glob.glob('TLV CVC/*.csv')
         self.dataset = glob.glob('GoldCoast/*.csv')
         self.days = self.get_days()
@@ -75,9 +74,12 @@ class Pandas:
         van = []
         motorbike = []
         person = []
+        vehicals = []
         for column in self.df.columns:
             if re.search('(car|truck|bus|motorbike|van|person)', column):
                 vehicle_columns.append(column)
+            if re.search('(car|truck|bus|motorbike|van)', column):
+                vehicals.append(column)    
             if re.search('car', column):
                 car.append(column)  
             if re.search('bus', column):
@@ -90,7 +92,7 @@ class Pandas:
                 motorbike.append(column) 
             if re.search('person',column):
                 person.append(column)                           
-        return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck, "van":van, "motorbike":motorbike, 'person':person}         
+        return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck, "van":van, "motorbike":motorbike, 'person':person, 'vehicals':vehicals}         
         
         
     def build_basic_chart(self, start_time, end_time):
@@ -123,14 +125,17 @@ class Pandas:
         car = 0
         truck = 0
         bus = 0
+        ped = 0
         for i, row in period.iterrows():
             for column in vehicle_columns['car']:
                 car += row[column]
             for column in vehicle_columns['bus']:
                 bus += row[column]
             for column in vehicle_columns['truck']:
-                truck += row[column]               
-        return {"cars": car, "busses": bus, "trucks": truck}   
+                truck += row[column]  
+            for column in vehicle_columns['person']:
+                ped += row[column]                 
+        return {"cars": car, "busses": bus, "trucks": truck, "pedestrians": ped}   
     
     def build_vehicles_chart(self, start_time, end_time, vehicle):
         period = self.get_time_period(start_time, end_time)
@@ -156,6 +161,7 @@ class Pandas:
     
     def get_lanes(self, start_time, end_time):
         period = self.get_time_period(start_time, end_time)
+
         lanes = {
             '11': 0,
             '12': 0,
@@ -166,6 +172,17 @@ class Pandas:
             '31': 0,
             '32': 0,
         }
+        
+        peds = {
+            '1': 0,
+            '2': 0,
+            '3': 0,
+            '4': 0,
+            '5': 0,
+        }
+        
+        peds_cols ={}
+        
         col11 = self.get_lanes_columns('11')
         col12 = self.get_lanes_columns('12')
         col13 = self.get_lanes_columns('13')
@@ -175,6 +192,9 @@ class Pandas:
         col31 = self.get_lanes_columns('31')
         col32 = self.get_lanes_columns('32')
         
+        for ped in peds:
+            peds_cols[ped] = self.get_lanes_columns(ped, 'person')
+               
         for i, row in period.iterrows():
             for column in col11:
                 lanes['11']+= row[column]
@@ -191,15 +211,19 @@ class Pandas:
             for column in col31:
                 lanes['31']+= row[column]
             for column in col32:
-                lanes['32']+= row[column]                          
+                lanes['32']+= row[column]  
+            for ped in peds:
+                for column in peds_cols[ped]:
+                    peds[ped] += row[column]
+                                                           
+        return {"vehicals":lanes, "peds":peds}    
             
-        return lanes    
             
-            
-    def get_lanes_columns(self, type):
+    def get_lanes_columns(self, direction, type='vehicals'):
         lane = []
-        for column in self.df.columns:
-            if re.search(type, column):
+        columns = self.get_vehicals_columns()[type]
+        for column in columns:
+            if re.search("^"+direction, column):
                 lane.append(column)
         return lane      
     
