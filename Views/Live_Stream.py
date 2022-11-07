@@ -6,15 +6,19 @@ import threading
 import random
 import time
 
+lock = Lock()
+
 class Live_Stream():
     def __init__(self):
-        self.SERVER_IP = os.getenv('SERVER_IP')
-        self.r = redis.Redis(host=self.SERVER_IP, port=6379)
-        self.lock = Lock()
+        self.REDIS_IP = os.getenv('MOCK_UP_REDIS')
+        self.REDIS_PORT = os.getenv('MOCK_UP_REDIS_PORT')
+        self.REDIS_PASSWORD = os.getenv('MOCK_UP_REDIS_PASSWORD')
+        self.r = redis.Redis(host=self.REDIS_IP, port=self.REDIS_PORT, password=self.REDIS_PASSWORD)
         
     def generate_live_stream(self):
         mylist = range(10)
         while True:
+            global lock 
             live_stream = self.r.get('vehicles real time')
             live_stream = live_stream.decode('utf-8')
             yield live_stream
@@ -43,6 +47,7 @@ class Live_Stream():
         
     def generate_barChart_stream(self):
         while True:
+            global lock 
             barChart_stream = self.r.get('bar chart')
             barChart_stream = barChart_stream.decode('utf-8')
             yield barChart_stream
@@ -73,6 +78,7 @@ class Live_Stream():
     
     def generate_waiting_stream(self):
         while True:
+            global lock 
             waiting_stream = self.r.get('waiting')
             waiting_stream = waiting_stream.decode('utf-8')
             yield waiting_stream
