@@ -1,6 +1,8 @@
-from flask import Blueprint
+from flask import Blueprint, Response
 import random
 from Models.ModelsAPI import ModelsAPI
+from Views.Live_Stream import Live_Stream
+import threading
 
 vehicles_realtime_api = Blueprint('vehicles_realtime_api', __name__)
 
@@ -9,4 +11,11 @@ def realTime_vehicles():
     user_id = ModelsAPI().velidate_user()
     if not user_id:
         return {"message": "You are not logged in or unauthorized"}, 401
-    return {"cars":random.randint(1,100), "trucks":random.randint(1,100), "buses":random.randint(1,100), "pedestrians":random.randint(1,100)}
+    
+    
+    Live_Stream().generate_mock_data()
+    
+
+    return Response(Live_Stream().generate_live_stream(), mimetype='application/json')
+    
+    
