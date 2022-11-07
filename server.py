@@ -19,6 +19,7 @@ from APIs.problem_report_api import problem_report_api
 from APIs.vehicles_realtime_api import vehicles_realtime_api
 from APIs.history_traffic_api import history_traffic_api
 from APIs.historical_traffic_count_api import historical_traffic_count_api
+from APIs.waiting_roi_api import waiting_roi_api
 from dotenv import load_dotenv
 import os
 from auth import db
@@ -72,6 +73,7 @@ app.register_blueprint(problem_report_api)
 app.register_blueprint(vehicles_realtime_api)
 app.register_blueprint(history_traffic_api)
 app.register_blueprint(historical_traffic_count_api)
+app.register_blueprint(waiting_roi_api)
 
 
 server_session=Session(app)

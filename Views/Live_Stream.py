@@ -46,6 +46,34 @@ class Live_Stream():
             barChart_stream = self.r.get('bar chart')
             barChart_stream = barChart_stream.decode('utf-8')
             yield barChart_stream
-            time.sleep(5)    
+            time.sleep(5)  
+            
+            
+    def generate_mock_waiting(self):
+        threading.Timer(5.0, self.generate_mock_waiting).start()
+        data = {"vehicles":{
+            "lane11":bool(random.getrandbits(1)),
+            'lane12':bool(random.getrandbits(1)),
+            'lane13':bool(random.getrandbits(1)),
+            'lane14':bool(random.getrandbits(1)),
+            'lane21':bool(random.getrandbits(1)),
+            'lane22':bool(random.getrandbits(1)),
+            'lane31':bool(random.getrandbits(1)),
+            'lane32':bool(random.getrandbits(1)),
+        },
+            'peds':{
+                "place1":random.randint(0, 10),
+                'place2':random.randint(0, 10),
+                'place3':random.randint(0, 10),
+                'place4':random.randint(0, 10),
+                'place5':random.randint(0, 10),
+            }  
+        }
+        self.r.set('waiting', json.dumps(data))        
     
-        
+    def generate_waiting_stream(self):
+        while True:
+            waiting_stream = self.r.get('waiting')
+            waiting_stream = waiting_stream.decode('utf-8')
+            yield waiting_stream
+            time.sleep(5)
