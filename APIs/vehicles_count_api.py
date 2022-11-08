@@ -16,6 +16,7 @@ def vehicles_count():
     
     start_date = str(request.args.get('start_date'))
     end_date = str(request.args.get('end_date'))
+    day = request.args.get('day')
     
     directions = {'north_south': False, 'south_north': False, 'east_west': False, 'west_east': False} 
     for key in directions:
@@ -26,10 +27,9 @@ def vehicles_count():
     
     if end_date == 'undefined':   
         end_date = '23:45:00'
-        
-    print(request.args)    
+          
     
-    vehicals = Pandas().count_vehicles(start_date, end_date, directions)
+    vehicals = Pandas().count_vehicles(start_date, end_date, day)
 
     return {"data":{
    "cars": vehicals['cars'],

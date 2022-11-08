@@ -21,6 +21,8 @@ def traffic_volume():
     bus = request.args.get('buses')
     truck = request.args.get('trucks')
     peds = request.args.get('pedestrians')
+    day = request.args.get('day')
+    
       
     if start_date == 'undefined':
        start_date = '00:00:00'
@@ -33,29 +35,29 @@ def traffic_volume():
         directions[key]=request.args.get(key)     
      
     chart = {"all": 0, "car": 0, "bus": 0, "truck": 0, "peds": 0}  
-    zero = Pandas().build_zero_chart(start_date, end_date) 
+    zero = Pandas().build_zero_chart(start_date, end_date, day) 
     
     if all == 'true':
-        chart["all"] = Pandas().build_vehicles_chart(start_date, end_date, 'all', directions)
+        chart["all"] = Pandas().build_vehicles_chart(start_date, end_date, 'all', directions, day)
     else: 
         chart["all"] = zero    
     if car == 'true':
-        chart["car"] = Pandas().build_vehicles_chart(start_date, end_date, 'car', directions) 
+        chart["car"] = Pandas().build_vehicles_chart(start_date, end_date, 'car', directions, day) 
     else:
         chart['car'] = zero   
     if truck == 'true':
-        chart["truck"] = Pandas().build_vehicles_chart(start_date, end_date, 'truck', directions) 
+        chart["truck"] = Pandas().build_vehicles_chart(start_date, end_date, 'truck', directions, day) 
     else:
         chart['truck'] = zero   
     if bus == 'true':
-        chart["bus"] = Pandas().build_vehicles_chart(start_date, end_date, 'bus', directions)
+        chart["bus"] = Pandas().build_vehicles_chart(start_date, end_date, 'bus', directions, day)
     else: 
         chart['bus'] = zero    
     if peds == 'true':
-        chart["peds"] = Pandas().build_vehicles_chart(start_date, end_date, 'person', directions)
+        chart["peds"] = Pandas().build_vehicles_chart(start_date, end_date, 'person', directions, day)
     else: 
         chart['peds'] = zero            
         
-    lane = Pandas().get_lanes(start_date, end_date)   
+    lane = Pandas().get_lanes(start_date, end_date, day)   
     
     return {"data":chart, "lanes": lane['vehicals'], 'peds': lane['peds']}

@@ -13,7 +13,8 @@ class Live_Stream():
         self.REDIS_IP = os.getenv('MOCK_UP_REDIS')
         self.REDIS_PORT = os.getenv('MOCK_UP_REDIS_PORT')
         self.REDIS_PASSWORD = os.getenv('MOCK_UP_REDIS_PASSWORD')
-        self.r = redis.Redis(host=self.REDIS_IP, port=self.REDIS_PORT, password=self.REDIS_PASSWORD)
+        self.r = redis.Redis(host ='localhost', port = 6379)
+        # self.r = redis.Redis(host=self.REDIS_IP, port=self.REDIS_PORT, password=self.REDIS_PASSWORD)
         
     def generate_live_stream(self):
         mylist = range(10)
