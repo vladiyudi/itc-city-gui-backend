@@ -149,8 +149,7 @@ class Pandas:
         
         day = self.select_day(day)
         day = list(day.values())[0]
-        
-        
+    
         start = '0'
         finish = '95'
         for i, row in day.iterrows():
@@ -160,8 +159,6 @@ class Pandas:
                 finish = i
         period = day.iloc[start:finish]
         return period
-    
-    
     
 
     def filter_by_direction(self, directions, columns):
@@ -230,11 +227,7 @@ class Pandas:
                 return file
     
     def build_vehicles_chart(self, start_time, end_time, vehicle, directions, day):
-        
        
-        
-        # print(self.df)
-        
         period = self.get_time_period(start_time, end_time, day)
         vehicle_columns = self.get_vehicals_columns()[vehicle]
         vehicle_columns = self.filter_by_direction(directions, vehicle_columns)
@@ -248,14 +241,14 @@ class Pandas:
             chart.append([time, sum])  
         return chart  
     
-    def build_zero_chart(self, start_time, end_time, day):
-        period = self.get_time_period(start_time, end_time, day)
-        chart = []
-        for i, row in period.iterrows():
-            time = row['Start']
-            time = pd.to_datetime(time)
-            chart.append([time, 0])
-        return chart
+    # def build_zero_chart(self, start_time, end_time, day):
+    #     period = self.get_time_period(start_time, end_time, day)
+    #     chart = []
+    #     for i, row in period.iterrows():
+    #         time = row['Start']
+    #         time = pd.to_datetime(time)
+    #         chart.append([time, 0])
+    #     return chart
     
     def get_lanes(self, start_time, end_time, day):
         period = self.get_time_period(start_time, end_time, day)
@@ -350,4 +343,19 @@ class Pandas:
                 person.append(column)                             
         return {"all":vehicle_columns, "car":car, "bus":bus, "truck":truck, "van":van, "motorbike":motorbike, 'person':person}
     
- 
+    def get_traffic_volume_period(self, start_date, end_date, start_time, end_time, weekdays, type='all',):
+        directions = {'north_south': 'true', 'south_north': 'true', 'east_west': 'true', 'west_east': 'true'} 
+        period = self.get_history_period(start_date, end_date)
+        period = self.filter_by_weekdays(weekdays, period)
+        chart = []
+        for day in period:
+            now = list(str(list(day.keys())[0]))
+            now = now[0]+now[1]+now[2]+now[3] + \
+                "-"+now[4]+now[5]+"-"+now[6]+now[7]
+      
+            chartData = self.build_vehicles_chart(start_time, end_time, type, directions, now)
+            
+            chart.append({"date":now, 'chart':chartData})
+            
+            
+        return chart    
