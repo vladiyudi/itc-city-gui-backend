@@ -92,16 +92,16 @@ class Pandas:
             days = sorted(days, key=lambda x: list(x.keys())[0])
         return days
 
-    def build_zero_history_chart(self, start_date, end_date):
-        chart = []
-        days = self.get_history_period(start_date, end_date)
-        for day in days:
-            now = list(str(list(day.keys())[0]))
-            now = now[0]+now[1]+now[2]+now[3] + \
-                "-"+now[4]+now[5]+"-"+now[6]+now[7]
-            # now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
-            chart.append([now, 0])
-        return chart
+    # def build_zero_history_chart(self, start_date, end_date):
+    #     chart = []
+    #     days = self.get_history_period(start_date, end_date)
+    #     for day in days:
+    #         now = list(str(list(day.keys())[0]))
+    #         now = now[0]+now[1]+now[2]+now[3] + \
+    #             "-"+now[4]+now[5]+"-"+now[6]+now[7]
+    #         # now = "20"+now[0]+now[1]+"-"+now[2]+now[3]+"-"+now[4]+now[5]
+    #         chart.append([now, 0])
+    #     return chart
 
     def get_history_period(self, start_date, end_date):
         control = False
@@ -241,15 +241,6 @@ class Pandas:
             chart.append([time, sum])  
         return chart  
     
-    # def build_zero_chart(self, start_time, end_time, day):
-    #     period = self.get_time_period(start_time, end_time, day)
-    #     chart = []
-    #     for i, row in period.iterrows():
-    #         time = row['Start']
-    #         time = pd.to_datetime(time)
-    #         chart.append([time, 0])
-    #     return chart
-    
     def get_lanes(self, start_time, end_time, day):
         period = self.get_time_period(start_time, end_time, day)
 
@@ -359,3 +350,28 @@ class Pandas:
             
             
         return chart    
+    
+    def build_snake_chart(self, chart_data):
+        data = {}
+        for idx, day in enumerate(chart_data):
+            for time, value in day['chart']:
+               time = time.strftime("%H:%M")
+               if idx == 0:
+                   data[time] = [value]
+               else:
+                   data[time].append(value)    
+        min = []
+        max = []
+        avg = []           
+        for time in data:
+            data[time].sort()
+            t = pd.to_datetime(time)
+            # time=pd.to_datetime(time)
+            min.append([t, data[time][0]])
+            max.append([t,data[time][-1]])
+            avg.append([t, sum(data[time])/len(data[time])])
+        return {"min":min, "max":max, "avg":avg} 
+    
+                       
+                  
+       

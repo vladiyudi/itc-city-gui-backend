@@ -25,26 +25,30 @@ def history_traffic():
     for key in days:
         days[key]=request.args.get(key)
         
+        
+        
+        
     
     if args['allVehicles'] == 'true':
         chart_data['all'] = Pandas().build_multipledays_chart(start_date, end_date, 'all', directions, days) 
-        peiod = Pandas().get_traffic_volume_period(start_date, end_date, start_time, end_time, days, 'all') 
+        period = Pandas().get_traffic_volume_period(start_date, end_date, start_time, end_time, days, 'all') 
    
     if args['cars'] == 'true':
         chart_data['car'] = Pandas().build_multipledays_chart(start_date, end_date, 'car', directions, days)
-        peiod = Pandas().get_traffic_volume_period(start_date, end_date, start_time, end_time, days, 'car') 
+        period = Pandas().get_traffic_volume_period(start_date, end_date, start_time, end_time, days, 'car') 
 
     if args['trucks'] == 'true':     
         chart_data['truck'] = Pandas().build_multipledays_chart(start_date, end_date, 'truck', directions, days)
-        peiod = Pandas().get_traffic_volume_period(start_date, end_date, start_time, end_time, days, 'truck') 
+        period = Pandas().get_traffic_volume_period(start_date, end_date, start_time, end_time, days, 'truck') 
   
     if args['buses']== 'true':       
         chart_data['bus'] = Pandas().build_multipledays_chart(start_date, end_date, 'bus', directions, days)
-        peiod = Pandas().get_traffic_volume_period(start_date, end_date, start_time, end_time, days, 'bus') 
+        period = Pandas().get_traffic_volume_period(start_date, end_date, start_time, end_time, days, 'bus') 
     
     if args['pedestrians'] == 'true':    
         chart_data['peds'] = Pandas().build_multipledays_chart(start_date, end_date, 'person', directions, days)
-        peiod = Pandas().get_traffic_volume_period(start_date, end_date, start_time, end_time, days, 'person')
+        period = Pandas().get_traffic_volume_period(start_date, end_date, start_time, end_time, days, 'person')
                 
+    snake_chart = Pandas().build_snake_chart(period)
             
-    return {"chart_data":chart_data, "period": peiod}
+    return {"chart_data":chart_data, "period": period, "snake_chart": snake_chart}
